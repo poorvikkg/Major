@@ -1,0 +1,30 @@
+"use strict";
+/**
+ * env.ts
+ * Loads and validates environment variables.
+ * Crashes the app if required variables are missing — better to fail fast.
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.env = void 0;
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+exports.env = {
+    port: parseInt(process.env.PORT || '5000', 10),
+    nodeEnv: process.env.NODE_ENV || 'development',
+    mongoUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/surveillance_db',
+    jwtSecret: process.env.JWT_SECRET || 'fallback_secret',
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    uploadDir: process.env.UPLOAD_DIR || 'uploads',
+    corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
+    rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
+    isDev: process.env.NODE_ENV !== 'production',
+};
+// Validate critical variables
+if (!process.env.JWT_SECRET) {
+    console.warn('⚠️  JWT_SECRET not set. Using fallback (unsafe for production).');
+}
+//# sourceMappingURL=env.js.map
