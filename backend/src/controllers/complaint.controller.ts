@@ -8,6 +8,8 @@ import { AuthRequest } from '../types';
 import * as complaintService from '../services/complaint.service';
 import { sendSuccess, sendPaginated } from '../utils/response';
 import { getPaginationOptions, buildPaginationMeta } from '../utils/pagination';
+import { uploadToMinio } from '../services/minio.service';
+import fs from 'fs';
 
 export async function getAll(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -32,9 +34,6 @@ export async function getOne(req: AuthRequest, res: Response, next: NextFunction
   }
 }
 
-import { uploadToMinio } from '../services/minio.service';
-import fs from 'fs';
-
 export async function create(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
   try {
     const attachmentUrls: string[] = [];
@@ -46,9 +45,7 @@ export async function create(req: AuthRequest, res: Response, next: NextFunction
           const url = await uploadToMinio(file.path, 'attachments');
           attachmentUrls.push(url);
         } finally {
-          if (fs.existsSync(file.path)) {
-            fs.unlinkSync(file.path);
-          }
+          if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
         }
       }
     } else if (req.file) {
@@ -57,14 +54,11 @@ export async function create(req: AuthRequest, res: Response, next: NextFunction
         const url = await uploadToMinio(file.path, 'attachments');
         attachmentUrls.push(url);
       } finally {
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
-        }
+        if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
       }
     }
 
     req.body.attachments = attachmentUrls;
-
     const complaint = await complaintService.createComplaint(req.body, req.user?._id);
     sendSuccess(res, 'Complaint submitted successfully', complaint, 201);
   } catch (err) {

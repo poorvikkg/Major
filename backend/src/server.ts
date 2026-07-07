@@ -21,20 +21,19 @@ async function startServer(): Promise<void> {
     logger.error('Failed to initialize MinIO bucket:', err);
   });
 
-  // 2. Create the HTTP server wrapping Express
+  // 3. Create the HTTP server wrapping Express
   const httpServer = http.createServer(app);
 
-  // 3. Attach Socket.IO to the same HTTP server
+  // 4. Attach Socket.IO to the same HTTP server
   initializeSocket(httpServer);
 
-  // 4. Start listening
+  // 5. Start listening
   httpServer.listen(env.port, () => {
-    logger.info(`🚀 Server running on http://localhost:${env.port}`);
-    logger.info(`📁 Environment: ${env.nodeEnv}`);
-    logger.info(`🔌 Socket.IO ready`);
+    logger.info(`Server running on http://localhost:${env.port}`);
+    logger.info(`Environment: ${env.nodeEnv}`);
   });
 
-  // 5. Handle graceful shutdown (e.g. Ctrl+C or process kill)
+  // 6. Handle graceful shutdown
   process.on('SIGTERM', () => {
     logger.info('SIGTERM received. Shutting down gracefully...');
     httpServer.close(() => {

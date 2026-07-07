@@ -1,11 +1,11 @@
 /**
  * recognition.service.ts
  * Business logic for recognition logs and unknown face alerts.
- * Also contains AI integration points for the future Python service.
  */
 
 import { Types } from 'mongoose';
 import * as recognitionRepo from '../repositories/recognition.repository';
+import { addNotification } from './notification.service';
 
 export async function getLogs(page: number, limit: number, cameraId?: string, videoId?: string) {
   const filter: Record<string, unknown> = {};
@@ -21,8 +21,6 @@ export async function getUnknownFaces(page: number, limit: number) {
 export async function getDetectionsByDay(days: number) {
   return recognitionRepo.getDetectionsByDay(days);
 }
-
-import { addNotification } from './notification.service';
 
 export async function logRecognition(data: {
   personName?: string;
@@ -60,14 +58,11 @@ export async function logRecognition(data: {
   return log;
 }
 
-// AI Integration Point: registers a new face in the AI database
+// AI Integration stubs — called by external Python AI service via webhook
 export async function registerFace(_data: { name: string; images: string[] }) {
-  // TODO: POST to Python AI service: http://ai-service/api/register-face
   return { message: 'Face registration queued for AI processing' };
 }
 
-// AI Integration Point: run recognition on a single image
 export async function recognize(_imageBase64: string) {
-  // TODO: POST to Python AI service: http://ai-service/api/recognize
   return { message: 'Recognition request sent to AI service' };
 }

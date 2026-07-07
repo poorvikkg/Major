@@ -1,3 +1,9 @@
+/**
+ * notification.service.ts
+ * Business logic for user notifications.
+ */
+
+import { Types } from 'mongoose';
 import * as notificationRepo from '../repositories/notification.repository';
 import { AppError } from '../middlewares/error.middleware';
 
@@ -17,8 +23,6 @@ export async function markAllNotificationsRead(userId: string) {
   await notificationRepo.markAllAsRead(userId);
   return { message: 'All notifications marked as read' };
 }
-
-import { Types } from 'mongoose';
 
 export async function addNotification(data: {
   title: string;

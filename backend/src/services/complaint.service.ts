@@ -7,6 +7,7 @@ import { AppError } from '../middlewares/error.middleware';
 import * as complaintRepo from '../repositories/complaint.repository';
 import { CreateComplaintInput, UpdateComplaintInput } from '../validators/complaint.validator';
 import { Types } from 'mongoose';
+import { addNotification } from './notification.service';
 
 export async function getAllComplaints(
   page: number,
@@ -19,7 +20,6 @@ export async function getAllComplaints(
   if (status) filter.status = status;
   if (priority) filter.priority = priority;
   if (createdBy) filter.createdBy = createdBy;
-
   return complaintRepo.findAllComplaints({ page, limit, skip: (page - 1) * limit }, filter);
 }
 
@@ -37,8 +37,6 @@ export async function createComplaint(input: CreateComplaintInput, userId?: Type
     createdBy: userId,
   });
 }
-
-import { addNotification } from './notification.service';
 
 export async function updateComplaint(id: string, input: UpdateComplaintInput) {
   const complaint = await complaintRepo.updateComplaint(id, {
