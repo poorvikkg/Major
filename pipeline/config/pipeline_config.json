@@ -1,0 +1,67 @@
+{
+  "detector": {
+    "model_path": "models/face_detection/scrfd_10g_bnkps.onnx",
+    "conf_threshold": 0.5,
+    "nms_threshold": 0.4,
+    "input_size": [640, 640],
+    "intra_op_num_threads": 4
+  },
+  "recognizer": {
+    "model_path": "models/face_recognition/arcface_r100_finetuned.onnx",
+    "embedding_dim": 512,
+    "batch_size": 32,
+    "intra_op_num_threads": 4
+  },
+  "tracker": {
+    "max_age": 30,
+    "min_hits": 3,
+    "iou_threshold": 0.3,
+    "high_conf_thresh": 0.6,
+    "low_conf_thresh": 0.1
+  },
+  "inference": {
+    "recognition_threshold": 0.45,
+    "faiss_top_k": 3
+  },
+  "stream": {
+    "frame_skip": 3,
+    "reconnect_delay_sec": 5.0,
+    "max_reconnect_tries": 10,
+    "frame_buffer_size": 4,
+    "fps_cap": 30
+  },
+  "video": {
+    "frame_interval": 30,
+    "dedup_window_frames": 90,
+    "supported_extensions": [".mp4", ".avi", ".mov", ".mkv", ".webm"]
+  },
+  "notification": {
+    "cooldown_seconds": 30,
+    "save_frames": true,
+    "include_frame_b64": false,
+    "frame_quality_jpeg": 90
+  },
+  "faiss": {
+    "index_dir": "data/faiss",
+    "embedding_dim": 512,
+    "search_threshold": 0.4
+  },
+  "embeddings": {
+    "store_dir": "data/embeddings",
+    "embedding_dim": 512,
+    "min_valid_images": 1
+  },
+  "paths": {
+    "registered_faces_dir": "data/registered_faces",
+    "uploads_images_dir": "data/uploads/images",
+    "uploads_videos_dir": "data/uploads/videos",
+    "uploads_temp_dir": "data/uploads/temp"
+  },
+  "backend": {
+    "url": "http://localhost:5000",
+    "socket_url": "http://localhost:5000",
+    "api_key": "",
+    "timeout_sec": 5,
+    "max_retries": 3
+  }
+}

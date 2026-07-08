@@ -1,0 +1,40 @@
+# =============================================================================
+# pipeline/requirements.txt
+# Production dependencies for the AI pipeline
+# =============================================================================
+
+# ---- Core inference --------------------------------------------------------
+onnxruntime-gpu>=1.17.0      # GPU (CUDA) build — falls back gracefully to CPU
+# onnxruntime>=1.17.0        # Uncomment and comment the line above for CPU-only
+
+# ---- Computer Vision -------------------------------------------------------
+opencv-python-headless>=4.9.0  # Headless build (no GUI); use opencv-python for dev
+numpy>=1.24.0,<2.0.0
+
+# ---- Image utilities -------------------------------------------------------
+Pillow>=10.0.0
+
+# ---- Data persistence (embeddings / FAISS) ---------------------------------
+faiss-cpu>=1.7.4             # CPU FAISS — swap for faiss-gpu when GPU is available
+
+# ---- Database --------------------------------------------------------------
+psycopg2>=2.9.9       # PostgreSQL adapter (compiled from source via libpq-dev)
+
+# ---- Configuration & validation --------------------------------------------
+pydantic>=2.0.0              # Runtime type-safe config parsing
+python-dotenv>=1.0.0         # Load .env files for secret management
+
+# ---- Serialization ---------------------------------------------------------
+msgpack>=1.0.7               # Fast binary serialization for embedding caches
+
+# ---- Backend communication -------------------------------------------------
+requests>=2.31.0             # HTTP client for POST /api/detection
+python-socketio[client]>=5.10.0  # Socket.IO client for real-time events
+websocket-client>=1.7.0      # WebSocket transport for Socket.IO
+
+# ---- Logging ---------------------------------------------------------------
+# Standard library logging is used throughout; no extra dep needed
+
+# ---- Testing (dev only) ----------------------------------------------------
+pytest>=7.4.0
+pytest-cov>=4.1.0
