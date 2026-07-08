@@ -41,6 +41,7 @@ exports.getAllUsers = getAllUsers;
 exports.getUserById = getUserById;
 exports.updateUser = updateUser;
 exports.deleteUser = deleteUser;
+exports.createUser = createUser;
 const error_middleware_1 = require("../middlewares/error.middleware");
 const userRepo = __importStar(require("../repositories/user.repository"));
 async function getAllUsers(page, limit, role) {
@@ -65,5 +66,11 @@ async function deleteUser(id) {
     if (!user)
         throw new error_middleware_1.AppError('User not found', 404);
     return user;
+}
+async function createUser(data) {
+    const existingUser = await userRepo.findUserByEmail(data.email);
+    if (existingUser)
+        throw new error_middleware_1.AppError('Email or Username already exists', 400);
+    return userRepo.createUser(data);
 }
 //# sourceMappingURL=user.service.js.map

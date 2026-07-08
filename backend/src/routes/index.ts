@@ -13,6 +13,7 @@ import complaintRoutes from './complaint.routes';
 import dashboardRoutes from './dashboard.routes';
 import userRoutes from './user.routes';
 import notificationRoutes from './notification.routes';
+import jobRoutes from './job.routes';
 
 const router = Router();
 
@@ -25,5 +26,7 @@ router.use('/complaints', complaintRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/users', userRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/jobs', jobRoutes);
 
 export default router;
+

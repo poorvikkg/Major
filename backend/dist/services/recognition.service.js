@@ -2,7 +2,6 @@
 /**
  * recognition.service.ts
  * Business logic for recognition logs and unknown face alerts.
- * Also contains AI integration points for the future Python service.
  */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -46,8 +45,13 @@ exports.registerFace = registerFace;
 exports.recognize = recognize;
 const mongoose_1 = require("mongoose");
 const recognitionRepo = __importStar(require("../repositories/recognition.repository"));
-async function getLogs(page, limit, cameraId) {
-    const filter = cameraId ? { cameraId } : {};
+const notification_service_1 = require("./notification.service");
+async function getLogs(page, limit, cameraId, videoId) {
+    const filter = {};
+    if (cameraId)
+        filter.cameraId = cameraId;
+    if (videoId)
+        filter.videoId = videoId;
     return recognitionRepo.findAllLogs({ page, limit, skip: (page - 1) * limit }, filter);
 }
 async function getUnknownFaces(page, limit) {
@@ -56,10 +60,8 @@ async function getUnknownFaces(page, limit) {
 async function getDetectionsByDay(days) {
     return recognitionRepo.getDetectionsByDay(days);
 }
-// AI Integration Point: will be called by Python AI service via webhook
-// to log a new face recognition event
 async function logRecognition(data) {
-    return recognitionRepo.createLog({
+    const log = await recognitionRepo.createLog({
         personName: data.personName,
         isUnknown: data.isUnknown,
         confidence: data.confidence,
@@ -68,15 +70,27 @@ async function logRecognition(data) {
         snapshot: data.snapshot,
         timestamp: data.timestamp || new Date(),
     });
+    if (data.isUnknown) {
+        await (0, notification_service_1.addNotification)({
+            title: 'Alert: Unknown Face Detected',
+            message: `An unidentified person was detected with ${Math.round(data.confidence * 100)}% confidence.`,
+            type: 'alert',
+        }).catch((err) => console.error('Unknown face notification failed:', err));
+    }
+    else if (data.personName) {
+        await (0, notification_service_1.addNotification)({
+            title: 'Alert: Target Subject Spotted',
+            message: `Subject "${data.personName}" was recognized with ${Math.round(data.confidence * 100)}% confidence.`,
+            type: 'warning',
+        }).catch((err) => console.error('Subject match notification failed:', err));
+    }
+    return log;
 }
-// AI Integration Point: registers a new face in the AI database
+// AI Integration stubs — called by external Python AI service via webhook
 async function registerFace(_data) {
-    // TODO: POST to Python AI service: http://ai-service/api/register-face
     return { message: 'Face registration queued for AI processing' };
 }
-// AI Integration Point: run recognition on a single image
 async function recognize(_imageBase64) {
-    // TODO: POST to Python AI service: http://ai-service/api/recognize
     return { message: 'Recognition request sent to AI service' };
 }
 //# sourceMappingURL=recognition.service.js.map

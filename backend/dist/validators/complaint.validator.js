@@ -15,6 +15,7 @@ exports.createComplaintSchema = zod_1.z.object({
     incidentAt: zod_1.z.string().datetime({ message: 'Invalid date/time format' }),
     description: zod_1.z.string().min(10, 'Description must be at least 10 characters').max(2000),
     priority: zod_1.z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+    attachments: zod_1.z.array(zod_1.z.string()).optional(),
 });
 exports.updateComplaintSchema = zod_1.z.object({
     status: zod_1.z.enum(['open', 'in_progress', 'resolved', 'closed']).optional(),

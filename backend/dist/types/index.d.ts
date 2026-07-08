@@ -84,7 +84,7 @@ export interface IComplaint {
     cameraId?: Types.ObjectId;
     incidentAt: Date;
     description: string;
-    attachment?: string;
+    attachments?: string[];
     priority: ComplaintPriority;
     status: ComplaintStatus;
     assignedTo?: Types.ObjectId;

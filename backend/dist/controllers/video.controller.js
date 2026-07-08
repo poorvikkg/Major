@@ -42,6 +42,7 @@ exports.getOne = getOne;
 exports.upload = upload;
 exports.processVideo = processVideo;
 exports.remove = remove;
+exports.analyseVideo = analyseVideo;
 const videoService = __importStar(require("../services/video.service"));
 const response_1 = require("../utils/response");
 const pagination_1 = require("../utils/pagination");
@@ -90,6 +91,25 @@ async function remove(req, res, next) {
     try {
         await videoService.deleteVideo(req.params.id);
         (0, response_1.sendSuccess)(res, 'Video deleted successfully');
+    }
+    catch (err) {
+        next(err);
+    }
+}
+/**
+ * POST /videos/analyse
+ * One-shot: upload a video file and immediately queue it for face recognition.
+ * Returns the video record with status=queued so the client can poll for results.
+ */
+async function analyseVideo(req, res, next) {
+    try {
+        if (!req.file)
+            throw new error_middleware_1.AppError('No video file provided', 400);
+        // Save the video record
+        const video = await videoService.saveUploadedVideo(req.file, req.user._id, req.body.cameraId);
+        // Immediately queue it for processing
+        await videoService.processVideo(video._id.toString());
+        (0, response_1.sendSuccess)(res, 'Video uploaded and queued for analysis', video, 201);
     }
     catch (err) {
         next(err);

@@ -41,6 +41,7 @@ exports.getAll = getAll;
 exports.getOne = getOne;
 exports.update = update;
 exports.remove = remove;
+exports.create = create;
 const userService = __importStar(require("../services/user.service"));
 const response_1 = require("../utils/response");
 const pagination_1 = require("../utils/pagination");
@@ -77,6 +78,15 @@ async function remove(req, res, next) {
     try {
         await userService.deleteUser(req.params.id);
         (0, response_1.sendSuccess)(res, 'User deactivated');
+    }
+    catch (err) {
+        next(err);
+    }
+}
+async function create(req, res, next) {
+    try {
+        const user = await userService.createUser(req.body);
+        (0, response_1.sendSuccess)(res, 'User created successfully by Administrator', user, 201);
     }
     catch (err) {
         next(err);

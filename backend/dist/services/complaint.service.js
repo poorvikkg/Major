@@ -46,12 +46,15 @@ exports.getComplaintStats = getComplaintStats;
 const error_middleware_1 = require("../middlewares/error.middleware");
 const complaintRepo = __importStar(require("../repositories/complaint.repository"));
 const mongoose_1 = require("mongoose");
-async function getAllComplaints(page, limit, status, priority) {
+const notification_service_1 = require("./notification.service");
+async function getAllComplaints(page, limit, status, priority, createdBy) {
     const filter = {};
     if (status)
         filter.status = status;
     if (priority)
         filter.priority = priority;
+    if (createdBy)
+        filter.createdBy = createdBy;
     return complaintRepo.findAllComplaints({ page, limit, skip: (page - 1) * limit }, filter);
 }
 async function getComplaintById(id) {
@@ -75,6 +78,15 @@ async function updateComplaint(id, input) {
     });
     if (!complaint)
         throw new error_middleware_1.AppError('Complaint not found', 404);
+    if (complaint.createdBy) {
+        const notifyMessage = `Complaint status: ${complaint.status.replace(/_/g, ' ').toUpperCase()}.${input.remarks ? ` Remark: "${input.remarks}"` : ''}`;
+        await (0, notification_service_1.addNotification)({
+            title: `Complaint Update #${complaint._id.toString().slice(-6)}`,
+            message: notifyMessage,
+            type: complaint.status === 'resolved' ? 'success' : 'info',
+            userId: complaint.createdBy.toString(),
+        }).catch((err) => console.error('Notification trigger failed:', err));
+    }
     return complaint;
 }
 async function deleteComplaint(id) {

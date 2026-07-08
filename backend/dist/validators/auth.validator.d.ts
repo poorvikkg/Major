@@ -17,17 +17,17 @@ export declare const registerSchema: z.ZodObject<{
     name: z.ZodString;
     email: z.ZodString;
     password: z.ZodString;
-    role: z.ZodDefault<z.ZodEnum<["admin", "operator", "viewer"]>>;
+    role: z.ZodDefault<z.ZodLiteral<"viewer">>;
 }, "strip", z.ZodTypeAny, {
     name: string;
     email: string;
     password: string;
-    role: "admin" | "operator" | "viewer";
+    role: "viewer";
 }, {
     name: string;
     email: string;
     password: string;
-    role?: "admin" | "operator" | "viewer" | undefined;
+    role?: "viewer" | undefined;
 }>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;

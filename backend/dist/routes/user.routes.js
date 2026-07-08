@@ -45,6 +45,7 @@ const router = (0, express_1.Router)();
 // All user management routes require admin role
 router.use(auth_middleware_1.authenticate, (0, role_middleware_1.requireRole)('admin'));
 router.get('/', userController.getAll);
+router.post('/', userController.create);
 router.get('/:id', userController.getOne);
 router.put('/:id', userController.update);
 router.delete('/:id', userController.remove);

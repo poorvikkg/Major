@@ -4,7 +4,7 @@
  */
 import { CreateComplaintInput, UpdateComplaintInput } from '../validators/complaint.validator';
 import { Types } from 'mongoose';
-export declare function getAllComplaints(page: number, limit: number, status?: string, priority?: string): Promise<{
+export declare function getAllComplaints(page: number, limit: number, status?: string, priority?: string, createdBy?: string): Promise<{
     complaints: import("../models/Complaint").IComplaintDocument[];
     total: number;
 }>;

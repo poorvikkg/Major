@@ -14,5 +14,17 @@ export declare const env: {
     rateLimitWindowMs: number;
     rateLimitMax: number;
     isDev: boolean;
+    minio: {
+        endpoint: string;
+        accessKey: string;
+        secretKey: string;
+        bucket: string;
+    };
+    redis: {
+        host: string;
+        port: number;
+        /** Leave undefined in development; set in production */
+        password: string | undefined;
+    };
 };
 //# sourceMappingURL=env.d.ts.map

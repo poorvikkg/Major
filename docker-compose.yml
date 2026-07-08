@@ -1,4 +1,10 @@
-version: '3.8'
+# Infrastructure services only.
+# The backend runs locally with: npm run dev
+# Connect to Redis at localhost:6379 (mapped by the redis service below).
+
+networks:
+  sentinel_network:
+    driver: bridge
 
 services:
   mongodb:
@@ -9,6 +15,8 @@ services:
       - '27017:27017'
     volumes:
       - mongo_data:/data/db
+    networks:
+      - sentinel_network
 
   minio:
     image: minio/minio:latest
@@ -23,9 +31,32 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
+    networks:
+      - sentinel_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: sentinel_redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    # Persist data to disk using Redis AOF
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - sentinel_network
 
 volumes:
   mongo_data:
     driver: local
   minio_data:
+    driver: local
+  redis_data:
     driver: local

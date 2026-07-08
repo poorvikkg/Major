@@ -12,6 +12,7 @@ export declare const createComplaintSchema: z.ZodObject<{
     incidentAt: z.ZodString;
     description: z.ZodString;
     priority: z.ZodDefault<z.ZodEnum<["low", "medium", "high", "critical"]>>;
+    attachments: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
 }, "strip", z.ZodTypeAny, {
     name: string;
     email: string;
@@ -20,6 +21,7 @@ export declare const createComplaintSchema: z.ZodObject<{
     incidentAt: string;
     priority: "low" | "medium" | "high" | "critical";
     cameraId?: string | undefined;
+    attachments?: string[] | undefined;
     phone?: string | undefined;
 }, {
     name: string;
@@ -28,6 +30,7 @@ export declare const createComplaintSchema: z.ZodObject<{
     description: string;
     incidentAt: string;
     cameraId?: string | undefined;
+    attachments?: string[] | undefined;
     phone?: string | undefined;
     priority?: "low" | "medium" | "high" | "critical" | undefined;
 }>;

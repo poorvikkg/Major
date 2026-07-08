@@ -48,6 +48,8 @@ router.get('/', videoController.getAll);
 router.get('/:id', videoController.getOne);
 // Operators and admins can upload videos
 router.post('/upload', (0, role_middleware_1.requireRole)('admin', 'operator'), upload_middleware_1.uploadVideo.single('video'), videoController.upload);
+// One-shot: upload + immediately queue for face recognition analysis
+router.post('/analyse', (0, role_middleware_1.requireRole)('admin', 'operator', 'viewer'), upload_middleware_1.uploadVideo.single('video'), videoController.analyseVideo);
 // AI integration: queue a video for processing
 router.post('/process', (0, role_middleware_1.requireRole)('admin', 'operator'), videoController.processVideo);
 router.delete('/:id', (0, role_middleware_1.requireRole)('admin', 'operator'), videoController.remove);

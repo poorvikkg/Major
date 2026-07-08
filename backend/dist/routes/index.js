@@ -16,6 +16,8 @@ const recognition_routes_1 = __importDefault(require("./recognition.routes"));
 const complaint_routes_1 = __importDefault(require("./complaint.routes"));
 const dashboard_routes_1 = __importDefault(require("./dashboard.routes"));
 const user_routes_1 = __importDefault(require("./user.routes"));
+const notification_routes_1 = __importDefault(require("./notification.routes"));
+const job_routes_1 = __importDefault(require("./job.routes"));
 const router = (0, express_1.Router)();
 // Mount each route module at its API prefix
 router.use('/auth', auth_routes_1.default);
@@ -25,5 +27,7 @@ router.use('/recognition', recognition_routes_1.default);
 router.use('/complaints', complaint_routes_1.default);
 router.use('/dashboard', dashboard_routes_1.default);
 router.use('/users', user_routes_1.default);
+router.use('/notifications', notification_routes_1.default);
+router.use('/jobs', job_routes_1.default);
 exports.default = router;
 //# sourceMappingURL=index.js.map

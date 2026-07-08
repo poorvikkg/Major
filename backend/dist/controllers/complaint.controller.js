@@ -36,6 +36,9 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAll = getAll;
 exports.getOne = getOne;
@@ -46,12 +49,16 @@ exports.getStats = getStats;
 const complaintService = __importStar(require("../services/complaint.service"));
 const response_1 = require("../utils/response");
 const pagination_1 = require("../utils/pagination");
+const minio_service_1 = require("../services/minio.service");
+const fs_1 = __importDefault(require("fs"));
 async function getAll(req, res, next) {
     try {
         const { page, limit } = (0, pagination_1.getPaginationOptions)(req);
         const status = req.query.status;
         const priority = req.query.priority;
-        const { complaints, total } = await complaintService.getAllComplaints(page, limit, status, priority);
+        // Viewers can only see their own complaints
+        const createdBy = req.user?.role === 'viewer' ? req.user._id.toString() : undefined;
+        const { complaints, total } = await complaintService.getAllComplaints(page, limit, status, priority, createdBy);
         (0, response_1.sendPaginated)(res, 'Complaints retrieved', complaints, (0, pagination_1.buildPaginationMeta)(total, page, limit));
     }
     catch (err) {
@@ -69,10 +76,32 @@ async function getOne(req, res, next) {
 }
 async function create(req, res, next) {
     try {
-        // Attach the file path if an attachment was uploaded
-        if (req.file) {
-            req.body.attachment = req.file.path;
+        const attachmentUrls = [];
+        if (req.files && Array.isArray(req.files)) {
+            const filesList = req.files;
+            for (const file of filesList) {
+                try {
+                    const url = await (0, minio_service_1.uploadToMinio)(file.path, 'attachments');
+                    attachmentUrls.push(url);
+                }
+                finally {
+                    if (fs_1.default.existsSync(file.path))
+                        fs_1.default.unlinkSync(file.path);
+                }
+            }
         }
+        else if (req.file) {
+            const file = req.file;
+            try {
+                const url = await (0, minio_service_1.uploadToMinio)(file.path, 'attachments');
+                attachmentUrls.push(url);
+            }
+            finally {
+                if (fs_1.default.existsSync(file.path))
+                    fs_1.default.unlinkSync(file.path);
+            }
+        }
+        req.body.attachments = attachmentUrls;
         const complaint = await complaintService.createComplaint(req.body, req.user?._id);
         (0, response_1.sendSuccess)(res, 'Complaint submitted successfully', complaint, 201);
     }

@@ -50,7 +50,8 @@ async function getLogs(req, res, next) {
     try {
         const { page, limit } = (0, pagination_1.getPaginationOptions)(req);
         const cameraId = req.query.cameraId;
-        const { logs, total } = await recognitionService.getLogs(page, limit, cameraId);
+        const videoId = req.query.videoId;
+        const { logs, total } = await recognitionService.getLogs(page, limit, cameraId, videoId);
         (0, response_1.sendPaginated)(res, 'Recognition logs retrieved', logs, (0, pagination_1.buildPaginationMeta)(total, page, limit));
     }
     catch (err) {

@@ -24,6 +24,12 @@ export const env = {
     secretKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
     bucket: process.env.MINIO_BUCKET || 'sentinel-bucket',
   },
+  redis: {
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379', 10),
+    /** Leave undefined in development; set in production */
+    password: process.env.REDIS_PASSWORD || undefined,
+  },
 };
 
 // Validate critical variables

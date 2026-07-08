@@ -71,7 +71,7 @@ const ComplaintSchema = new mongoose_1.Schema({
         required: [true, 'Description is required'],
         maxlength: 2000,
     },
-    attachment: { type: String }, // file path of uploaded attachment
+    attachments: [{ type: String }], // file paths of uploaded suspect/evidence photos
     priority: {
         type: String,
         enum: ['low', 'medium', 'high', 'critical'],

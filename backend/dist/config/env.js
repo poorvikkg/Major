@@ -22,6 +22,18 @@ exports.env = {
     rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
     rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
     isDev: process.env.NODE_ENV !== 'production',
+    minio: {
+        endpoint: process.env.MINIO_ENDPOINT || 'http://localhost:9000',
+        accessKey: process.env.MINIO_ACCESS_KEY || 'minioadmin',
+        secretKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
+        bucket: process.env.MINIO_BUCKET || 'sentinel-bucket',
+    },
+    redis: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '6379', 10),
+        /** Leave undefined in development; set in production */
+        password: process.env.REDIS_PASSWORD || undefined,
+    },
 };
 // Validate critical variables
 if (!process.env.JWT_SECRET) {

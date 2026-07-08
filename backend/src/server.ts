@@ -11,6 +11,7 @@ import { initializeSocket } from './socket/socket';
 import { initializeMinio } from './services/minio.service';
 import { env } from './config/env';
 import { logger } from './config/logger';
+import { startWorkers, stopWorkers } from './workers';
 
 async function startServer(): Promise<void> {
   // 1. Connect to MongoDB first — fail fast if DB is unavailable
@@ -27,15 +28,19 @@ async function startServer(): Promise<void> {
   // 4. Attach Socket.IO to the same HTTP server
   initializeSocket(httpServer);
 
-  // 5. Start listening
+  // 5. Start BullMQ workers (they connect to Redis independently)
+  startWorkers();
+
+  // 6. Start listening
   httpServer.listen(env.port, () => {
     logger.info(`Server running on http://localhost:${env.port}`);
     logger.info(`Environment: ${env.nodeEnv}`);
   });
 
-  // 6. Handle graceful shutdown
-  process.on('SIGTERM', () => {
+  // 7. Handle graceful shutdown — wait for in-flight jobs before exiting
+  process.on('SIGTERM', async () => {
     logger.info('SIGTERM received. Shutting down gracefully...');
+    await stopWorkers();
     httpServer.close(() => {
       logger.info('HTTP server closed');
       process.exit(0);
@@ -47,3 +52,4 @@ startServer().catch((err) => {
   logger.error({ err }, 'Failed to start server');
   process.exit(1);
 });
+

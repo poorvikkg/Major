@@ -50,7 +50,7 @@ router.get('/', complaintController.getAll);
 router.get('/stats', complaintController.getStats);
 router.get('/:id', complaintController.getOne);
 // Any authenticated user can submit a complaint
-router.post('/', upload_middleware_1.uploadAttachment.single('attachment'), (0, validate_middleware_1.validate)(complaint_validator_1.createComplaintSchema), complaintController.create);
+router.post('/', upload_middleware_1.uploadAttachment.array('attachments', 10), (0, validate_middleware_1.validate)(complaint_validator_1.createComplaintSchema), complaintController.create);
 // Only admins and operators can update complaints
 router.put('/:id', (0, role_middleware_1.requireRole)('admin', 'operator'), (0, validate_middleware_1.validate)(complaint_validator_1.updateComplaintSchema), complaintController.update);
 router.delete('/:id', (0, role_middleware_1.requireRole)('admin'), complaintController.remove);

@@ -1,9 +1,8 @@
 /**
  * recognition.service.ts
  * Business logic for recognition logs and unknown face alerts.
- * Also contains AI integration points for the future Python service.
  */
-export declare function getLogs(page: number, limit: number, cameraId?: string): Promise<{
+export declare function getLogs(page: number, limit: number, cameraId?: string, videoId?: string): Promise<{
     logs: import("../models/RecognitionLog").IRecognitionLogDocument[];
     total: number;
 }>;
